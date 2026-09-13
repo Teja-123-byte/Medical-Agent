@@ -51,6 +51,18 @@ const VALUE_LABELS: Record<string, string> = {
   UNRESPONSIVE: 'Unresponsive',
 };
 
+const VALUE_LABELS: Record<string, string> = {
+  MILD: 'Mild',
+  MODERATE: 'Moderate',
+  SEVERE: 'Severe',
+  NONE: 'None',
+  MINOR: 'Minor',
+  ALERT: 'Alert',
+  DROWSY: 'Drowsy',
+  CONFUSED: 'Confused',
+  UNRESPONSIVE: 'Unresponsive',
+};
+
 export function formatValue(value: unknown): string {
   if (value === null || value === undefined) return '—';
   if (Array.isArray(value)) return value.join(', ');
