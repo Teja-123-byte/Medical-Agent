@@ -3,7 +3,7 @@
 // Identifies when new information conflicts with previously recorded values.
 // ============================================================================
 
-import { PatientState, ContradictionEntry, Answer, FieldMeta } from '@/types';
+import { PatientState, ContradictionEntry, Answer } from '@/types';
 
 const FIELD_LABELS: Partial<Record<keyof PatientState, string>> = {
   symptom_severity: 'Symptom Severity',
@@ -42,10 +42,23 @@ const VITAL_TOLERANCES: Partial<Record<keyof PatientState, number>> = {
   age: 0, // any change in age is a contradiction
 };
 
+const VALUE_LABELS: Record<string, string> = {
+  MILD: 'Mild',
+  MODERATE: 'Moderate',
+  SEVERE: 'Severe',
+  NONE: 'None',
+  MINOR: 'Minor',
+  ALERT: 'Alert',
+  DROWSY: 'Drowsy',
+  CONFUSED: 'Confused',
+  UNRESPONSIVE: 'Unresponsive',
+};
+
 export function formatValue(value: unknown): string {
   if (value === null || value === undefined) return '—';
   if (Array.isArray(value)) return value.join(', ');
   if (typeof value === 'boolean') return value ? 'Yes' : 'No';
+  if (typeof value === 'string' && VALUE_LABELS[value]) return VALUE_LABELS[value];
   return String(value);
 }
 
@@ -54,6 +67,14 @@ export function detectContradiction(
   answer: Answer,
   existingContradictions: ContradictionEntry[]
 ): ContradictionEntry | null {
+  const alreadyRecorded = existingContradictions.some(
+    (contradiction) =>
+      !contradiction.resolved &&
+      contradiction.field === answer.field &&
+      contradiction.currentValue === formatValue(answer.value)
+  );
+  if (alreadyRecorded) return null;
+
   const { field, value } = answer;
   const prevValue = prevState[field];
 

@@ -2,7 +2,7 @@
 // UI Utilities — formatting and display helpers
 // ============================================================================
 
-import { FieldMeta, FIELD_METADATA, PatientState, FieldStatus } from '@/types';
+import { FIELD_METADATA, PatientState, FieldStatus } from '@/types';
 
 export function getFieldStatus(state: PatientState, field: keyof PatientState): FieldStatus {
   // Check if there's an unresolved contradiction

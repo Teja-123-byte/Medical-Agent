@@ -1,4 +1,4 @@
-import { Heart, Thermometer, Wind, Droplet, Brain, User, FileText } from 'lucide-react';
+import { Heart, Brain, User, FileText } from 'lucide-react';
 import { PatientState, FIELD_METADATA } from '@/types';
 import { getFieldStatus, formatFieldValue, STATUS_BADGE_STYLES } from '@/utils/ui';
 

@@ -3,7 +3,7 @@
 // Records every major agent action with full context.
 // ============================================================================
 
-import { AuditEvent, AuditAction, RoutingDecision, PatientState } from '@/types';
+import { AuditEvent, AuditAction, RoutingDecision } from '@/types';
 
 let eventCounter = 0;
 

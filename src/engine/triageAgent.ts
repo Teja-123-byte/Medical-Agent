@@ -5,11 +5,11 @@
 //   Recalculate → Reassess → Route
 // ============================================================================
 
-import { PatientState, Question, Answer, RiskResult, ContradictionEntry, AuditEvent, RiskLevel, RoutingDecision } from '@/types';
+import { PatientState, Question, Answer, RiskResult } from '@/types';
 import { calculateRisk } from './riskEngine';
 import { determineRouting } from './routing';
 import { selectNextQuestion, getMissingInformation, shouldStopEarly } from './questionSelector';
-import { detectContradiction, formatValue } from './contradictionDetector';
+import { detectContradiction } from './contradictionDetector';
 import { createAuditEvent } from './auditLog';
 
 // --- State initialization ---
@@ -170,7 +170,7 @@ export function processAnswer(
   }
 
   // Update the field
-  (state as Record<string, unknown>)[question.field] = answer.value;
+  (state as unknown as Record<string, unknown>)[question.field] = answer.value;
 
   // Record answer
   state.answers_received.push(answer);
@@ -317,7 +317,7 @@ export function resolveContradiction(
     const fieldAnswers = newState.answers_received.filter((a) => a.field === contradiction.field);
     if (fieldAnswers.length >= 2) {
       const prevAnswer = fieldAnswers[fieldAnswers.length - 2];
-      (newState as Record<string, unknown>)[contradiction.field] = prevAnswer.value;
+      (newState as unknown as Record<string, unknown>)[contradiction.field] = prevAnswer.value;
     }
   }
 
