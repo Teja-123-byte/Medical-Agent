@@ -4,7 +4,25 @@
 // demonstration values for a research simulation only.
 // ============================================================================
 
-import { PatientState, RiskLevel } from '@/types';
+import { PatientState } from '@/types';
+import {
+  BLOOD_PRESSURE_THRESHOLDS,
+  HEART_RATE_THRESHOLDS,
+  OXYGEN_THRESHOLDS,
+  RESPIRATORY_RATE_THRESHOLDS,
+  RISK_WEIGHTS,
+  TEMPERATURE_THRESHOLDS,
+} from '@/data/riskConfig';
+
+export {
+  BLOOD_PRESSURE_THRESHOLDS,
+  HEART_RATE_THRESHOLDS,
+  OXYGEN_THRESHOLDS,
+  RESPIRATORY_RATE_THRESHOLDS,
+  RISK_THRESHOLDS,
+  RISK_WEIGHTS,
+  TEMPERATURE_THRESHOLDS,
+} from '@/data/riskConfig';
 
 export interface RiskRule {
   field: keyof PatientState;
@@ -12,114 +30,6 @@ export interface RiskRule {
   // Returns risk points (0 if condition not met)
   evaluate: (state: PatientState) => number;
 }
-
-export interface RiskThreshold {
-  level: RiskLevel;
-  minScore: number;
-  maxScore: number;
-}
-
-// --- Configurable weights and thresholds ---
-
-export const OXYGEN_THRESHOLDS = {
-  critical: 88, // SpO2 <= 88 → critical contribution
-  severe: 91,   // SpO2 89-91 → high contribution
-  moderate: 94, // SpO2 92-94 → moderate contribution
-};
-
-export const HEART_RATE_THRESHOLDS = {
-  criticalLow: 40,
-  criticalHigh: 140,
-  highLow: 50,
-  highHigh: 120,
-  moderateLow: 55,
-  moderateHigh: 110,
-};
-
-export const RESPIRATORY_RATE_THRESHOLDS = {
-  criticalLow: 8,
-  criticalHigh: 35,
-  highLow: 10,
-  highHigh: 28,
-  moderateLow: 12,
-  moderateHigh: 24,
-};
-
-export const TEMPERATURE_THRESHOLDS = {
-  criticalHigh: 40.0,
-  highHigh: 39.0,
-  moderateHigh: 38.0,
-  criticalLow: 35.0,
-};
-
-export const BLOOD_PRESSURE_THRESHOLDS = {
-  criticalHigh: 180,
-  highHigh: 160,
-  moderateHigh: 140,
-  criticalLow: 80,
-  highLow: 90,
-  moderateLow: 100,
-};
-
-export const RISK_WEIGHTS = {
-  oxygenSaturation: {
-    critical: 30,
-    severe: 20,
-    moderate: 10,
-  },
-  heartRate: {
-    critical: 25,
-    high: 15,
-    moderate: 8,
-  },
-  respiratoryRate: {
-    critical: 25,
-    high: 15,
-    moderate: 8,
-  },
-  temperature: {
-    critical: 20,
-    high: 12,
-    moderate: 6,
-  },
-  bloodPressure: {
-    critical: 25,
-    high: 15,
-    moderate: 8,
-  },
-  consciousness: {
-    unresponsive: 35,
-    confused: 25,
-    drowsy: 10,
-  },
-  symptomSeverity: {
-    SEVERE: 20,
-    MODERATE: 10,
-    MILD: 3,
-  },
-  chestPain: 15,
-  breathingDifficulty: {
-    SEVERE: 20,
-    MODERATE: 12,
-    MILD: 5,
-  },
-  bleeding: {
-    SEVERE: 30,
-    MODERATE: 15,
-    MINOR: 5,
-  },
-  age: {
-    elderly: 10, // age >= 70
-    veryYoung: 5, // age <= 2
-  },
-};
-
-export const RISK_THRESHOLDS: RiskThreshold[] = [
-  { level: 'CRITICAL', minScore: 70, maxScore: 999 },
-  { level: 'HIGH', minScore: 40, maxScore: 69 },
-  { level: 'MODERATE', minScore: 15, maxScore: 39 },
-  { level: 'LOW', minScore: 0, maxScore: 14 },
-];
 
 // --- Risk rules ---
 

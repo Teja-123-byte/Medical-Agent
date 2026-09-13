@@ -4,6 +4,7 @@
 // ============================================================================
 
 import { PatientState, Question } from '@/types';
+import { findMatchingSymptoms } from '@/data/symptomCatalog';
 
 // --- All possible questions ---
 
@@ -228,10 +229,10 @@ export const QUESTION_BANK: Question[] = [
 function getPriorityBoost(question: Question, state: PatientState): number {
   let boost = 0;
 
-  const symptoms = state.symptoms.map((s) => s.toLowerCase());
-  const hasChestPain = symptoms.some((s) => s.includes('chest') && s.includes('pain'));
+  const matchedSymptoms = findMatchingSymptoms(state.symptoms);
+  const hasChestPain = matchedSymptoms.some((symptom) => symptom.id === 'chest-pain');
   const hasBreathingIssue =
-    symptoms.some((s) => s.includes('breath') || s.includes('short')) ||
+    matchedSymptoms.some((symptom) => symptom.id === 'breathing-difficulty') ||
     state.breathing_difficulty !== null;
 
   // If chest pain is reported, prioritize oxygen, heart rate, breathing
