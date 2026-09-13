@@ -162,8 +162,19 @@ export function processAnswer(
     );
   }
 
-  // Update the field
-  (state as unknown as Record<string, unknown>)[question.field] = answer.value;
+  // Update the field.
+  // Special-case `symptoms`: it's an additive/multi-value field, so a new
+  // answer should be merged into the existing list rather than replacing it
+  // wholesale. Every other field is a single current value and gets
+  // overwritten as before.
+  if (question.field === 'symptoms' && Array.isArray(answer.value)) {
+    const existing = Array.isArray(state.symptoms) ? state.symptoms : [];
+    const incoming = answer.value as string[];
+    const merged = Array.from(new Set([...existing, ...incoming]));
+    state.symptoms = merged;
+  } else {
+    (state as unknown as Record<string, unknown>)[question.field] = answer.value;
+  }
 
   // Record answer
   state.answers_received.push(answer);

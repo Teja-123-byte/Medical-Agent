@@ -1,12 +1,9 @@
-// ============================================================================
-// Adaptive Question Selector
-// Dynamically selects the highest-value next question based on current state.
-// ============================================================================
+
 
 import { PatientState, Question } from '@/types';
 import { findMatchingSymptoms } from '@/data/symptomCatalog';
 
-// --- All possible questions ---
+
 
 export const QUESTION_BANK: Question[] = [
   {
@@ -268,6 +265,14 @@ function getPriorityBoost(question: Question, state: PatientState): number {
     if (question.category === 'vitals') boost += 10;
   }
 
+  // Symptoms is re-askable so new symptoms can be added later, but once at
+  // least one symptom has already been recorded we don't want it repeatedly
+  // jumping the queue ahead of genuinely unanswered fields. Discount it
+  // instead of locking it out entirely.
+  if (question.field === 'symptoms' && state.symptoms.length > 0) {
+    boost -= 60;
+  }
+
   return boost;
 }
 
@@ -283,9 +288,12 @@ export function selectNextQuestion(state: PatientState): Question | null {
   );
 
   const candidates = QUESTION_BANK.filter((q) => {
-  
+    // Symptoms is additive — always keep it eligible so new symptoms can be
+    // reported later in the interview, even after it's been answered once.
+    if (q.field === 'symptoms') return true;
+
+    // Skip already-answered fields (unless there's an unresolved contradiction needing clarification)
     if (answeredFields.has(q.field)) {
-      
       const hasUnresolvedContradiction = state.contradictions.some(
         (c) => c.field === q.field && !c.resolved
       );
@@ -296,7 +304,7 @@ export function selectNextQuestion(state: PatientState): Question | null {
 
   if (candidates.length === 0) return null;
 
-  
+  // Sort by effective priority (base + boost)
   const scored = candidates.map((q) => ({
     question: q,
     effectivePriority: q.priority + getPriorityBoost(q, state),
@@ -307,7 +315,7 @@ export function selectNextQuestion(state: PatientState): Question | null {
   return scored[0].question;
 }
 
-
+// --- Missing information detection ---
 
 export function getMissingInformation(state: PatientState): string[] {
   const answeredFields = new Set(state.answers_received.map((a) => a.field));
@@ -316,10 +324,10 @@ export function getMissingInformation(state: PatientState): string[] {
     .map((q) => q.label);
 }
 
+// --- Check if we should stop early ---
 
-
-export function shouldStopEarly(state: PatientState): boolean 
-{
+export function shouldStopEarly(state: PatientState): boolean {
+  // Critical conditions that warrant immediate routing
   if (state.risk_level === 'CRITICAL') return true;
 
   if (state.consciousness === 'UNRESPONSIVE') return true;
@@ -333,6 +341,6 @@ export function shouldStopEarly(state: PatientState): boolean
 
 const OXYGEN_CRITICAL = 88;
 
-
+// --- Total question count ---
 
 export const TOTAL_QUESTIONS = QUESTION_BANK.length;
