@@ -5,7 +5,7 @@
 // ============================================================================
 
 import { PatientState, RiskLevel, RiskResult, RiskFactorContribution } from '@/types';
-import { RISK_RULES, RISK_THRESHOLDS } from './rules';
+import { OXYGEN_THRESHOLDS, RISK_RULES, RISK_THRESHOLDS } from './rules';
 
 export function classifyRisk(score: number): RiskLevel {
   for (const t of RISK_THRESHOLDS) {
@@ -33,7 +33,18 @@ export function calculateRisk(state: PatientState): RiskResult {
   }
 
   const score = factors.reduce((sum, f) => sum + f.points, 0);
-  const level = classifyRisk(score);
+  const hasCriticalOxygen = state.oxygen_saturation !== null && state.oxygen_saturation <= OXYGEN_THRESHOLDS.critical;
+  const hasModerateOxygen = state.oxygen_saturation !== null && state.oxygen_saturation <= OXYGEN_THRESHOLDS.moderate;
+  const isUnresponsive = state.consciousness === 'UNRESPONSIVE';
+  const level = hasCriticalOxygen
+    ? 'CRITICAL'
+    : isUnresponsive
+      ? 'HIGH'
+      : hasModerateOxygen && score < 15
+        ? 'MODERATE'
+        : score >= 70
+          ? 'HIGH'
+          : classifyRisk(score);
 
   // Confidence: based on how much information is present
   const fieldsEvaluated = RISK_RULES.length;

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { selectNextQuestion, getMissingInformation, shouldStopEarly, QUESTION_BANK } from '@/engine/questionSelector';
-import { createInitialState, processAnswer, parseAnswer } from '@/engine/triageAgent';
+import { createInitialState } from '@/engine/triageAgent';
 import { PatientState } from '@/types';
 
 function makeState(overrides: Partial<PatientState> = {}): PatientState {
