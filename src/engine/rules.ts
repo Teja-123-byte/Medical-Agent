@@ -1,8 +1,4 @@
-// ============================================================================
-// Configurable Risk Rules — SYNTHETIC DEMONSTRATION RULES
-// These thresholds are NOT clinically validated. They are synthetic
-// demonstration values for a research simulation only.
-// ============================================================================
+
 
 import { PatientState } from '@/types';
 import {
