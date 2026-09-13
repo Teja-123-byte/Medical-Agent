@@ -104,6 +104,12 @@ The routing policy converts the risk result and interview context into one of th
 
 The contradiction detector flags changes in qualitative fields and changes in vital signs beyond configured tolerances. Contradictions retain previous and current values, are shown in the interface, can trigger human review, and can be resolved by keeping either the previous or current answer.
 
+### Dashboard Simulations
+
+The main dashboard includes seeded synthetic patient scenarios with their patient names, expected risk levels, and routing decisions. The **New Simulation** action starts a custom questionnaire. When that assessment is complete, choosing **Restart** adds the entered patient details to the dashboard as a reusable simulation.
+
+Saved questionnaire entries are held in client-side React state for the current browser session. They are intentionally not persisted to a database or `localStorage`, so they are cleared when the page is refreshed or the app is restarted.
+
 ## Technology Stack
 
 - React 18 and React DOM
@@ -152,6 +158,8 @@ npm run lint        # Run ESLint
 npm run build       # Create a production build
 npm run preview     # Preview the production build locally
 ```
+
+No database or external service is required to run the dashboard simulations locally. Add a persistence layer only if saved patient scenarios need to survive page refreshes or be shared across users and devices.
 
 ## Testing
 
