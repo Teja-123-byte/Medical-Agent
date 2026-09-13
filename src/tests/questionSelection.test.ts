@@ -106,6 +106,58 @@ describe('Missing Information', () => {
     expect(missing.length).toBe(QUESTION_BANK.length - 1);
     expect(missing).not.toContain('Age');
   });
+
+  it('reports only unanswered fields after multiple answers', () => {
+    const state = makeState({ age: 40, symptoms: ['headache'] });
+    state.answers_received.push(
+      {
+        questionId: 'q_age',
+        field: 'age',
+        value: 40,
+        displayValue: '40 years',
+        timestamp: new Date().toISOString(),
+      },
+      {
+        questionId: 'q_symptoms',
+        field: 'symptoms',
+        value: ['headache'],
+        displayValue: 'headache',
+        timestamp: new Date().toISOString(),
+      }
+    );
+
+    const missing = getMissingInformation(state);
+    expect(missing).not.toContain('Age');
+    expect(missing).not.toContain('Symptoms');
+    expect(missing.length).toBe(QUESTION_BANK.length - 2);
+  });
+
+  it('re-asks a field with an unresolved contradiction', () => {
+    const state = makeState({ symptom_severity: 'MILD' });
+    QUESTION_BANK.forEach((question) => {
+      state.answers_received.push({
+        questionId: question.id,
+        field: question.field,
+        value: question.field === 'symptom_severity' ? 'MILD' : 'test',
+        displayValue: question.field === 'symptom_severity' ? 'Mild' : 'test',
+        timestamp: new Date().toISOString(),
+      });
+    });
+    state.contradictions.push({
+      id: 'c1',
+      field: 'symptom_severity',
+      fieldLabel: 'Symptom Severity',
+      previousValue: 'Mild',
+      currentValue: 'Severe',
+      previousDisplay: 'Mild',
+      currentDisplay: 'Severe',
+      resolved: false,
+      timestamp: new Date().toISOString(),
+      clarificationAsked: false,
+    });
+
+    expect(selectNextQuestion(state)?.field).toBe('symptom_severity');
+  });
 });
 
 describe('Early Termination', () => {

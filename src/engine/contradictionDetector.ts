@@ -1,7 +1,4 @@
-// ============================================================================
-// Contradiction Detector
-// Identifies when new information conflicts with previously recorded values.
-// ============================================================================
+
 
 import { PatientState, ContradictionEntry, Answer } from '@/types';
 
@@ -28,7 +25,7 @@ const QUALITATIVE_FIELDS: (keyof PatientState)[] = [
   'breathing_difficulty',
   'bleeding',
   'consciousness',
-  'symptoms',
+  // 'symptoms' is intentionally excluded — it's additive, handled separately below.
 ];
 
 // Fields where a change beyond a tolerance is a contradiction (vitals)
@@ -39,7 +36,19 @@ const VITAL_TOLERANCES: Partial<Record<keyof PatientState, number>> = {
   temperature: 1.0,
   systolic_blood_pressure: 20,
   diastolic_blood_pressure: 15,
-  age: 0, // any change in age is a contradiction
+  age: 0, 
+};
+
+const VALUE_LABELS: Record<string, string> = {
+  MILD: 'Mild',
+  MODERATE: 'Moderate',
+  SEVERE: 'Severe',
+  NONE: 'None',
+  MINOR: 'Minor',
+  ALERT: 'Alert',
+  DROWSY: 'Drowsy',
+  CONFUSED: 'Confused',
+  UNRESPONSIVE: 'Unresponsive',
 };
 
 const VALUE_LABELS: Record<string, string> = {
@@ -78,13 +87,23 @@ export function detectContradiction(
   const { field, value } = answer;
   const prevValue = prevState[field];
 
-  // Only detect contradictions for fields that were previously set
+ 
   if (prevValue === null || prevValue === undefined) return null;
 
   const prevStr = formatValue(prevValue);
   const newStr = formatValue(value);
 
   if (prevStr === newStr) return null;
+
+  if (field === 'symptoms' && Array.isArray(prevValue) && Array.isArray(value)) {
+    const prevSet = new Set(prevValue as string[]);
+    const newSet = new Set(value as string[]);
+    const dropped = [...prevSet].filter((s) => !newSet.has(s));
+
+    if (dropped.length === 0) return null;
+
+    return createContradictionEntry(field, prevValue, value, prevStr, newStr);
+  }
 
   const isQualitative = QUALITATIVE_FIELDS.includes(field);
 

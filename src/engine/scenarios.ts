@@ -1,7 +1,4 @@
-// ============================================================================
-// Synthetic Patient Scenarios — SYNTHETIC DATA ONLY
-// These are fictional patient profiles for research demonstration.
-// ============================================================================
+
 
 import { ScenarioTemplate } from '@/types';
 
