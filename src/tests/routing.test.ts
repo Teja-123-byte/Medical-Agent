@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { determineRouting } from '@/engine/routing';
-import { RiskLevel, RoutingDecision, ContradictionEntry } from '@/types';
+import { ContradictionEntry } from '@/types';
 
 function makeContradiction(overrides: Partial<ContradictionEntry> = {}): ContradictionEntry {
   return {

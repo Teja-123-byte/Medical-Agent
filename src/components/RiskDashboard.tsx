@@ -1,5 +1,5 @@
 import { TrendingUp, AlertCircle, Activity, ShieldAlert } from 'lucide-react';
-import { RiskResult, RiskLevel, RoutingDecision } from '@/types';
+import { RiskResult, RoutingDecision } from '@/types';
 import { ROUTING_LABELS, RISK_LEVEL_COLORS } from '@/engine/routing';
 
 interface RiskDashboardProps {

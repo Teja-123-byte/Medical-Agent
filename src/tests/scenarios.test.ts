@@ -8,8 +8,7 @@ import { PatientState } from '@/types';
 
 function runScenario(scenarioId: string): PatientState {
   const scenario = SCENARIOS.find((s) => s.id === scenarioId)!;
-  let state = createInitialState('p1', 's1', scenario.initialState);
-  return state;
+  return createInitialState('p1', 's1', scenario.initialState);
 }
 
 describe('Scenario Outcomes', () => {
@@ -116,7 +115,6 @@ describe('Contradictory Answer Handling', () => {
     });
 
     // Now answer with SEVERE
-    const question = { ...state, id: 'q_symptom_severity' };
     const answer = {
       questionId: 'q_symptom_severity',
       field: 'symptom_severity' as const,
