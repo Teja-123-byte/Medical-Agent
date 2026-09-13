@@ -50,3 +50,18 @@ Reassessment / Final Decision
 - `src/types/index.ts` defines shared state and result contracts.
 
 The agent may select questions and coordinate the workflow, but it must not directly determine medical risk. Synthetic risk scoring remains the responsibility of the deterministic risk engine.
+
+## Current and Planned Components
+
+Currently implemented:
+
+- Client-side React UI with no application backend.
+- In-memory `PatientState` managed by the triage orchestrator.
+- Deterministic question selection, contradiction detection, risk scoring, routing, and audit events.
+- Local synthetic scenarios and Vitest coverage.
+
+Planned or intentionally absent:
+
+- No production API, database, authentication, or remote agent service exists today.
+- No external LLM is used in the decision path.
+- Persistence, API documentation, richer audit export, and mobile refinements remain roadmap work.

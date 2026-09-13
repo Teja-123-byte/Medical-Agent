@@ -27,6 +27,14 @@ assignees: ''
 - Browser or operating system:
 - Commit or branch:
 
+## Screenshots or Logs
+
+<!-- Drag screenshots here or paste relevant logs. Remove secrets and personal data. -->
+
+## Additional Context
+
+<!-- Add any other context, related issues, or attempted fixes. -->
+
 ## Validation
 
 - [ ] I ran `npm test`.

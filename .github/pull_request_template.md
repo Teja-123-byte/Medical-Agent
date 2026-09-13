@@ -1,27 +1,33 @@
-## Summary
+## What changed?
 
 <!-- What changed and why? -->
 
-## Change Type
+## Why?
 
-- [ ] Feature
+<!-- Explain the problem this change solves. -->
+
+## Type of change
+
 - [ ] Bug fix
-- [ ] Test
+- [ ] New feature
 - [ ] Documentation
-- [ ] CI or tooling
+- [ ] Tests
+- [ ] Refactoring
+- [ ] CI/CD
 
-## Validation
+## Testing
 
-- [ ] `npm run typecheck`
-- [ ] `npm run lint`
-- [ ] `npm test`
-- [ ] `npm run build`
+- [ ] Tests added/updated
+- [ ] Existing tests pass
+- [ ] Build passes
 
-## Safety and Documentation
+## Checklist
 
-- [ ] No real patient data, credentials, or secrets are included.
-- [ ] Tests or documentation were updated where needed.
-- [ ] This change does not claim clinical validity for synthetic rules.
+- [ ] No secrets/API keys committed
+- [ ] Documentation updated if necessary
+- [ ] Changes are focused
+- [ ] No unnecessary dependencies added
+- [ ] No real patient data or clinical claims are included
 
 ## Notes for Reviewers
 

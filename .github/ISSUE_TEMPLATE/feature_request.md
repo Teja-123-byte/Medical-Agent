@@ -10,9 +10,17 @@ assignees: ''
 
 What problem would this feature solve?
 
-## Proposed Change
+## Proposed Solution
 
 Describe the behavior you would like to see.
+
+## Expected Impact
+
+Who benefits from this change, and what parts of the application or contributor workflow would it affect?
+
+## Additional Context
+
+<!-- Add examples, references, screenshots, or related issues. -->
 
 ## Alternatives Considered
 

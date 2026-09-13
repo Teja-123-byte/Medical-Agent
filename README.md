@@ -122,6 +122,8 @@ Vite will print the local URL, normally `http://localhost:5173`.
 ### Other commands
 
 ```bash
+npm test            # Run the Vitest suite
+npm run test:watch  # Run Vitest in watch mode
 npm run build       # Create a production build
 npm run preview     # Preview the production build locally
 npm run typecheck   # Run TypeScript checks
@@ -174,12 +176,13 @@ The project backlog is documented in [docs/roadmap.md](docs/roadmap.md). It incl
 - [Agent loop](docs/agent-loop.md)
 - [Risk engine](docs/risk-engine.md)
 - [Contributing](CONTRIBUTING.md)
+- [Maintainer guide](docs/maintainers.md)
 - [Security policy](SECURITY.md)
 - [Code of conduct](CODE_OF_CONDUCT.md)
 
 ## Safety Disclaimer
 
-This application uses fictional data and synthetic rules for engineering demonstration. Its output is not clinically validated, should not be relied on for medical decisions, and does not replace a qualified healthcare professional or emergency services. Do not enter real patient information into this project.
+This project uses synthetic patient data and is intended for research, education, and software-engineering experimentation only. It is not a medical diagnostic system and must not be used for real-world clinical decision-making.
 
 ## Contribution Instructions
 
