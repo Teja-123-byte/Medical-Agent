@@ -6,21 +6,24 @@ import { ScenarioTemplate } from '@/types';
 interface ScenarioSelectionProps {
   onSelectScenario: (scenario: ScenarioTemplate) => void;
   onStartCustom: () => void;
+  savedScenarios?: ScenarioTemplate[];
 }
 
-export function ScenarioSelection({ onSelectScenario, onStartCustom }: ScenarioSelectionProps) {
+export function ScenarioSelection({ onSelectScenario, onStartCustom, savedScenarios = [] }: ScenarioSelectionProps) {
+  const scenarios = [...savedScenarios, ...SCENARIOS.filter((s) => s.id !== 'custom')];
+
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
       <div className="text-center mb-8">
         <h2 className="text-2xl font-bold text-slate-900 mb-2">Start a Triage Simulation</h2>
         <p className="text-slate-500 text-sm max-w-2xl mx-auto">
-          Choose a synthetic patient scenario to observe the adaptive agent in action,
-          or create a custom patient from scratch.
+          Choose a seeded patient scenario to observe the adaptive agent in action,
+          or start a new simulation with a custom patient.
         </p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-        {SCENARIOS.filter((s) => s.id !== 'custom').map((scenario) => {
+        {scenarios.map((scenario) => {
           const colors = RISK_LEVEL_COLORS[scenario.expectedRiskLevel];
           return (
             <button
@@ -38,6 +41,9 @@ export function ScenarioSelection({ onSelectScenario, onStartCustom }: ScenarioS
                 <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-teal-500 group-hover:translate-x-1 transition-all" />
               </div>
               <h3 className="font-bold text-slate-900 mb-1">{scenario.name}</h3>
+              <p className="text-sm font-medium text-teal-700 mb-2">
+                {scenario.initialState.patient_name ?? 'Unnamed synthetic patient'}
+              </p>
               <p className="text-sm text-slate-500 leading-relaxed">{scenario.description}</p>
               <div className="mt-3 pt-3 border-t border-slate-100">
                 <span className="text-xs text-slate-400">Expected routing: </span>
@@ -55,7 +61,7 @@ export function ScenarioSelection({ onSelectScenario, onStartCustom }: ScenarioS
         className="w-full group flex items-center justify-center gap-3 bg-teal-600 text-white rounded-xl p-5 hover:bg-teal-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 shadow-sm"
       >
         <FlaskConical className="w-5 h-5" />
-        <span className="font-semibold">Create Custom Synthetic Patient</span>
+        <span className="font-semibold">New Simulation</span>
         <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
       </button>
 

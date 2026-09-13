@@ -7,6 +7,16 @@ import { findMatchingSymptoms } from '@/data/symptomCatalog';
 
 export const QUESTION_BANK: Question[] = [
   {
+    id: 'q_name',
+    category: 'demographics',
+    field: 'patient_name',
+    label: 'Patient Name',
+    prompt: 'What is the patient\'s name?',
+    answerType: 'text',
+    priority: 100,
+    placeholder: 'e.g. John Smith',
+  },
+  {
     id: 'q_age',
     category: 'demographics',
     field: 'age',

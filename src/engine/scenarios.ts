@@ -10,6 +10,7 @@ export const SCENARIOS: ScenarioTemplate[] = [
     expectedRouting: 'SELF_CARE',
     expectedRiskLevel: 'LOW',
     initialState: {
+      patient_name: 'Sarah Mitchell',
       age: 32,
       symptoms: ['Mild headache'],
       symptom_severity: 'MILD',
@@ -32,6 +33,7 @@ export const SCENARIOS: ScenarioTemplate[] = [
     expectedRouting: 'ROUTINE_CLINIC',
     expectedRiskLevel: 'MODERATE',
     initialState: {
+      patient_name: 'James Rodriguez',
       age: 45,
       symptoms: ['Fever', 'Body aches', 'Fatigue'],
       symptom_severity: 'MODERATE',
@@ -54,6 +56,7 @@ export const SCENARIOS: ScenarioTemplate[] = [
     expectedRouting: 'URGENT_CLINIC',
     expectedRiskLevel: 'HIGH',
     initialState: {
+      patient_name: 'David Chen',
       age: 58,
       symptoms: ['Chest pain', 'Shortness of breath'],
       symptom_severity: 'SEVERE',
@@ -76,6 +79,7 @@ export const SCENARIOS: ScenarioTemplate[] = [
     expectedRouting: 'EMERGENCY',
     expectedRiskLevel: 'CRITICAL',
     initialState: {
+      patient_name: 'Margaret Thompson',
       age: 72,
       symptoms: ['Severe chest pain', 'Severe breathing difficulty', 'Dizziness'],
       symptom_severity: 'SEVERE',
@@ -98,6 +102,7 @@ export const SCENARIOS: ScenarioTemplate[] = [
     expectedRouting: 'HUMAN_REVIEW',
     expectedRiskLevel: 'HIGH',
     initialState: {
+      patient_name: 'Robert Williams',
       age: 50,
       symptoms: ['Chest discomfort'],
       symptom_severity: 'MILD',

@@ -3,6 +3,7 @@
 import { PatientState, ContradictionEntry, Answer } from '@/types';
 
 const FIELD_LABELS: Partial<Record<keyof PatientState, string>> = {
+  patient_name: 'Patient Name',
   symptom_severity: 'Symptom Severity',
   chest_pain: 'Chest Pain',
   breathing_difficulty: 'Breathing Difficulty',

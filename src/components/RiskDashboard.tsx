@@ -1,5 +1,5 @@
-import { TrendingUp, AlertCircle, Activity, ShieldAlert } from 'lucide-react';
-import { RiskResult, RoutingDecision } from '@/types';
+import { TrendingUp, AlertCircle, Activity, ShieldAlert, User } from 'lucide-react';
+import { RiskResult, RoutingDecision, PatientState } from '@/types';
 import { ROUTING_LABELS, RISK_LEVEL_COLORS } from '@/engine/routing';
 
 interface RiskDashboardProps {
@@ -7,17 +7,18 @@ interface RiskDashboardProps {
   routingDecision: RoutingDecision;
   confidence: number;
   interviewComplete: boolean;
+  patientState?: PatientState;
 }
 
-export function RiskDashboard({ riskResult, routingDecision, confidence, interviewComplete }: RiskDashboardProps) {
+export function RiskDashboard({ riskResult, routingDecision, confidence, interviewComplete, patientState }: RiskDashboardProps) {
   const colors = RISK_LEVEL_COLORS[riskResult.level];
   const routingColor = getRoutingColor(routingDecision);
 
   return (
     <div className={`bg-white border-2 rounded-xl overflow-hidden shadow-sm ${colors.border}`}>
-      {/* Header with risk level */}
+      {/* Header with risk level and patient name */}
       <div className={`${colors.bg} px-5 py-4 border-b ${colors.border}`}>
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             <span className={`inline-block w-3 h-3 rounded-full ${colors.dot} ${riskResult.level === 'CRITICAL' ? 'animate-pulse' : ''}`} />
             <h3 className="font-bold text-slate-900 text-sm">Risk Dashboard</h3>
@@ -26,6 +27,16 @@ export function RiskDashboard({ riskResult, routingDecision, confidence, intervi
             {riskResult.level}
           </div>
         </div>
+        
+        {patientState?.patient_name && (
+          <div className="flex items-center gap-1.5 mt-2 pt-2 border-t" style={{ borderColor: colors.border === 'border-emerald-200' ? '#a7f3d0' : colors.border === 'border-amber-200' ? '#fcd34d' : colors.border === 'border-orange-200' ? '#fed7aa' : '#fecaca' }}>
+            <User className="w-3.5 h-3.5 text-slate-600" />
+            <span className="text-xs font-semibold text-slate-700">
+              {patientState.patient_name}
+              {patientState.age && ` • ${patientState.age} yrs`}
+            </span>
+          </div>
+        )}
       </div>
 
       <div className="p-5 space-y-5">
