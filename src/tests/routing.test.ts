@@ -126,4 +126,28 @@ describe('Routing Policy', () => {
       })
     ).toBe('PENDING');
   });
+
+  it('keeps an incomplete known-risk interview on its risk route', () => {
+    expect(
+      determineRouting({
+        riskLevel: 'MODERATE',
+        riskScore: 20,
+        contradictions: [],
+        confidence: 80,
+        interviewComplete: false,
+      })
+    ).toBe('ROUTINE_CLINIC');
+  });
+
+  it('does not escalate low-risk resolved contradictions to human review', () => {
+    expect(
+      determineRouting({
+        riskLevel: 'LOW',
+        riskScore: 5,
+        contradictions: [makeContradiction()],
+        confidence: 80,
+        interviewComplete: true,
+      })
+    ).toBe('SELF_CARE');
+  });
 });
