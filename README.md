@@ -1,71 +1,115 @@
-# Adaptive Emergency Triage Agent
+# Medical-Agent — Adaptive Emergency Triage Agent
 
-Deterministic synthetic emergency-triage simulation built with React, TypeScript, Vite, and Vitest.
+Medical-Agent is an open-source research simulation for adaptive patient triage. It combines structured patient state, adaptive questioning, deterministic synthetic risk scoring, contradiction handling, routing decisions, and an auditable decision loop in a client-side React application.
 
-> This project is for software research and demonstration only. It is not a medical device and must not be used to diagnose, treat, or triage real patients.
+> This project uses synthetic patient data and is intended for research, education, and software-engineering experimentation only. It is not a medical diagnostic system and must not be used for real-world clinical decision-making.
 
-## What Problem It Solves
+## Problem Statement
 
-Medical Agent demonstrates how an adaptive interview can collect patient information, update a structured patient state, calculate synthetic risk, detect contradictory answers, and route a case to an appropriate simulated outcome.
+Triage workflows often need to collect incomplete information, prioritize the next useful question, reassess changing answers, and explain how a decision was reached. Medical-Agent provides a transparent software model for exploring those workflow problems without presenting its synthetic rules as clinical guidance.
 
-The project is designed for developers who want to explore:
+## What the Agent Does
 
-- Rule-based decision engines with transparent scoring
-- Adaptive question selection from incomplete state
-- Contradiction detection and resolution
-- Auditability of agent decisions
-- A React interface for inspecting the complete decision loop
+The agent coordinates a local decision loop:
 
-## Architecture
+1. Initializes a structured `PatientState` from a synthetic scenario or a custom session.
+2. Selects the highest-priority unanswered question.
+3. Parses the user's answer into a typed value and display value.
+4. Detects contradictions against previously recorded state.
+5. Updates state and recalculates synthetic risk and confidence.
+6. Classifies risk and determines a routing decision.
+7. Records important transitions in the audit log.
+8. Continues until required information is collected or a high-risk condition ends the interview early.
+
+There is no external LLM call or production backend in the decision path. The agent coordinates the workflow; the deterministic risk engine owns synthetic risk scoring.
+
+## Architecture and Workflow
 
 ```text
-React UI
-	App.tsx
-		Scenario selection
-		Interview panel
-		Patient state and risk dashboards
-		Contradiction and audit panels
-					|
-					v
-Triage orchestrator
-	triageAgent.ts
-					|
-					+--> questionSelector.ts       Selects the next question
-					+--> contradictionDetector.ts  Detects conflicting answers
-					+--> riskEngine.ts              Calculates score and risk level
-					+--> routing.ts                 Maps risk to a route
-					+--> auditLog.ts                Records state transitions
-					|
-					v
-Structured PatientState
+Patient Input
+    |
+    v
+Patient State
+    |
+    v
+Adaptive Questioning
+    |
+    v
+Answer Processing and State Update
+    |
+    v
+Contradiction Detection
+    |
+    v
+Deterministic Risk Engine
+    |
+    v
+Risk Classification
+    |
+    v
+Routing Policy
+    |
+    v
+Reassessment / Final Decision
 ```
 
-Important boundaries:
+The main implementation boundaries are:
 
-- `src/components/` contains the presentation layer.
-- `src/engine/` contains deterministic application logic.
-- `src/types/` contains shared TypeScript contracts.
-- `src/tests/` contains unit and scenario tests for the engine.
+- `src/components/` renders the React interface.
+- `src/engine/triageAgent.ts` orchestrates state transitions.
+- `src/engine/questionSelector.ts` selects the next question.
+- `src/engine/contradictionDetector.ts` compares new and previous answers.
+- `src/engine/riskEngine.ts` calculates risk contributions and classification.
+- `src/engine/routing.ts` maps risk and interview context to a route.
+- `src/engine/auditLog.ts` records decision-loop events.
+- `src/types/index.ts` defines shared state and result contracts.
 
-## Features
+See the detailed [architecture documentation](docs/architecture.md) and [agent loop documentation](docs/agent-loop.md).
 
-- Synthetic patient scenarios for low, moderate, high, critical, and contradictory cases
-- Adaptive interview flow driven by missing information and question priority
-- Synthetic risk scoring from vitals, symptoms, consciousness, bleeding, and age
-- Risk levels: `LOW`, `MODERATE`, `HIGH`, and `CRITICAL`
-- Routing decisions: self-care, routine clinic, urgent clinic, emergency, or human review
-- Contradiction detection for qualitative changes and vital-sign changes beyond tolerance
-- Contradiction resolution by keeping the previous or current answer
-- Risk recalculation after every state update
-- Audit trail for session start, answers, state changes, risk changes, and routing changes
-- Responsive dashboard UI built with Tailwind CSS and Lucide icons
+## Key Features
+
+### Adaptive Questioning
+
+The question selector chooses unanswered fields by priority and applies context-sensitive boosts. Symptoms such as chest pain, breathing difficulty, bleeding, or impaired consciousness can prioritize relevant vital signs and observations.
+
+### Deterministic Risk Engine
+
+The risk engine evaluates transparent synthetic rules for oxygen saturation, heart rate, respiratory rate, temperature, blood pressure, consciousness, symptom severity, chest pain, breathing difficulty, bleeding, and age. Rule weights and thresholds are defined in `src/engine/rules.ts`.
+
+### Risk Levels
+
+The general score bands are:
+
+| Score | Level |
+| ---: | --- |
+| 0-14 | `LOW` |
+| 15-39 | `MODERATE` |
+| 40-69 | `HIGH` |
+| 70+ | `CRITICAL` |
+
+Configured high-signal findings, such as critical oxygen saturation or unresponsive consciousness, also have explicit synthetic classification behavior in the risk engine.
+
+### Routing Decisions
+
+The routing policy converts the risk result and interview context into one of these decisions:
+
+- `SELF_CARE` — monitor a low-risk synthetic case.
+- `ROUTINE_CLINIC` — follow up on a moderate-risk case.
+- `URGENT_CLINIC` — seek urgent evaluation for a high-risk case.
+- `EMERGENCY` — route a critical synthetic case to emergency handling.
+- `HUMAN_REVIEW` — escalate unresolved high-risk contradictions or low-confidence high-risk cases.
+- `PENDING` — continue assessment while the interview is incomplete.
+
+### Contradiction Handling
+
+The contradiction detector flags changes in qualitative fields and changes in vital signs beyond configured tolerances. Contradictions retain previous and current values, are shown in the interface, can trigger human review, and can be resolved by keeping either the previous or current answer.
 
 ## Technology Stack
 
 - React 18 and React DOM
 - TypeScript with strict compiler settings
 - Vite for development and production builds
-- Tailwind CSS for styling
+- Tailwind CSS and Lucide React for the interface
 - Vitest for unit and scenario tests
 - ESLint for static analysis
 
@@ -73,131 +117,82 @@ Important boundaries:
 
 ```text
 src/
-	components/   React presentation components
-	engine/       Deterministic triage and decision logic
-	tests/        Engine and scenario tests
-	types/        Shared TypeScript contracts
-	utils/        UI formatting and state helpers
-docs/           Architecture, agent loop, risk engine, and roadmap
+  components/   React presentation components
+  engine/       Deterministic triage and decision logic
+  tests/        Engine and scenario tests
+  types/        Shared TypeScript contracts
+  utils/        UI formatting and state helpers
+docs/           Architecture, agent loop, risk engine, roadmap, and maintainer guides
 .github/        CI, issue templates, and pull request template
 ```
 
-## Screenshots
-
-Add product screenshots to `docs/screenshots/` and link them here as the interface evolves. Suggested captures:
-
-| View | Description |
-| --- | --- |
-| Scenario selection | Choose a synthetic patient profile or start a custom session. |
-| Interview dashboard | Answer the next adaptive question and inspect current risk. |
-| Agent trace | Review questions, state updates, contradictions, and routing decisions. |
-
-Example Markdown for a committed screenshot:
-
-```md
-![Interview dashboard](docs/screenshots/interview-dashboard.png)
-```
-
-## How to Run
+## Run Locally
 
 ### Prerequisites
 
 - Node.js 18 or newer
 - npm
 
-### Install dependencies
+### Install and start development
 
 ```bash
 npm install
-```
-
-### Start the development server
-
-```bash
 npm run dev
 ```
 
-Vite will print the local URL, normally `http://localhost:5173`.
+Vite prints the local development URL, normally `http://localhost:5173`.
 
-### Other commands
+### Available commands
 
 ```bash
 npm test            # Run the Vitest suite
 npm run test:watch  # Run Vitest in watch mode
-npm run build       # Create a production build
-npm run preview     # Preview the production build locally
 npm run typecheck   # Run TypeScript checks
 npm run lint        # Run ESLint
+npm run build       # Create a production build
+npm run preview     # Preview the production build locally
 ```
-
-## How the Agent Works
-
-The decision loop is deterministic and runs locally:
-
-1. A scenario or custom session creates an initial `PatientState`.
-2. The question selector finds high-priority fields that are still missing.
-3. The user submits an answer, which is parsed into a typed value and display value.
-4. The contradiction detector compares the answer with the previous field value.
-5. The state is updated and the risk engine recalculates the synthetic score.
-6. The routing policy maps the risk level and interview state to a routing decision.
-7. Each important transition is written to the audit log.
-8. The agent continues until required information is collected or a high-risk condition ends the interview early.
-
-Risk scoring is intentionally transparent. Rules and weights live in `src/engine/rules.ts`; orchestration lives in `src/engine/triageAgent.ts`. There is no LLM call in the decision path.
 
 ## Testing
 
-Run the complete test suite with:
+The test suite covers:
+
+- Low-, moderate-, high-, and critical-risk scenarios
+- Risk scoring and risk classification
+- Routing policy
+- Adaptive question selection
+- Patient state updates and risk recalculation
+- Contradiction detection and resolution
+- Audit trail creation
+
+Run the suite with:
 
 ```bash
 npm test
 ```
 
-The tests cover:
+Before opening a pull request, run the complete validation set:
 
-- Contradiction detection and value formatting
-- Adaptive question selection
-- Risk scoring and risk classification
-- Routing policy
-- Scenario outcomes
-- Risk recalculation after updates
-- Contradiction resolution
-- Audit trail creation
+```bash
+npm run typecheck
+npm run lint
+npm test
+npm run build
+```
 
-The current suite contains 54 tests across five test files.
+## Contributing
 
-## Roadmap
+Contributions should preserve the separation between the React UI and deterministic engine logic. Fork the repository, create a focused feature branch, make the change, add or update tests, run the validation commands, and open a pull request against `main`.
 
-The project backlog is documented in [docs/roadmap.md](docs/roadmap.md). It includes improvements to adaptive questioning, contradiction coverage, synthetic scenarios, risk configuration, auditability, mobile UI, API documentation, and contributor workflow.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the full workflow, commit examples, review expectations, and pull request checklist.
 
-## Development Documentation
+Additional project policies:
 
-- [Architecture](docs/architecture.md)
-- [Agent loop](docs/agent-loop.md)
-- [Risk engine](docs/risk-engine.md)
-- [Contributing](CONTRIBUTING.md)
-- [Maintainer guide](docs/maintainers.md)
 - [Security policy](SECURITY.md)
 - [Code of conduct](CODE_OF_CONDUCT.md)
+- [Maintainer guide](docs/maintainers.md)
+- [Roadmap](docs/roadmap.md)
 
 ## Safety Disclaimer
 
 This project uses synthetic patient data and is intended for research, education, and software-engineering experimentation only. It is not a medical diagnostic system and must not be used for real-world clinical decision-making.
-
-## Contribution Instructions
-
-1. Create a feature branch from the default branch.
-2. Keep changes focused and preserve the separation between UI and deterministic engine logic.
-3. Add or update tests for behavior changes, especially risk and routing rules.
-4. Run the checks before opening a pull request:
-
-	 ```bash
-	 npm test
-	 npm run typecheck
-	 npm run lint
-	 npm run build
-	 ```
-
-5. Describe the behavior change, test coverage, and any safety implications in the pull request.
-
-Do not commit real patient data, credentials, or claims that the synthetic rules are clinically accurate.
