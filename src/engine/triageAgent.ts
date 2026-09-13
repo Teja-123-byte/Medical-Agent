@@ -16,6 +16,7 @@ export function createInitialState(
     patient_id: patientId,
     session_id: sessionId,
     timestamp: new Date().toISOString(),
+    patient_name: null,
     age: null,
     symptoms: [],
     symptom_severity: null,

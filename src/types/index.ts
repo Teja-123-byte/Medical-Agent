@@ -127,6 +127,7 @@ export interface PatientState {
   timestamp: string;
 
   // Demographics
+  patient_name: string | null;
   age: number | null;
 
   // Symptoms
@@ -191,6 +192,7 @@ export interface FieldMeta {
 }
 
 export const FIELD_METADATA: FieldMeta[] = [
+  { key: 'patient_name', label: 'Patient Name', category: 'demographics' },
   { key: 'age', label: 'Age', category: 'demographics', unit: 'years' },
   { key: 'symptoms', label: 'Symptoms', category: 'symptoms', format: (v) => Array.isArray(v) ? v.join(', ') : String(v) },
   { key: 'symptom_severity', label: 'Symptom Severity', category: 'symptoms' },

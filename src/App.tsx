@@ -20,6 +20,7 @@ export default function App() {
   const [patientState, setPatientState] = useState<PatientState | null>(null);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [answersHistory, setAnswersHistory] = useState<{ question: Question; answer: Answer }[]>([]);
+  const [savedScenarios, setSavedScenarios] = useState<ScenarioTemplate[]>([]);
 
   const riskResult = useMemo(() => {
     if (!patientState) return null;
@@ -77,11 +78,18 @@ export default function App() {
   );
 
   const handleRestart = useCallback(() => {
+    if (patientState) {
+      const savedScenario = createSavedScenario(patientState);
+      setSavedScenarios((previous) => [
+        savedScenario,
+        ...previous.filter((scenario) => scenario.id !== savedScenario.id),
+      ]);
+    }
     setAppState('selection');
     setPatientState(null);
     setCurrentQuestion(null);
     setAnswersHistory([]);
-  }, []);
+  }, [patientState]);
 
   // --- Render ---
 
@@ -92,7 +100,11 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
           <DisclaimerBanner />
         </div>
-        <ScenarioSelection onSelectScenario={handleSelectScenario} onStartCustom={handleStartCustom} />
+        <ScenarioSelection
+          onSelectScenario={handleSelectScenario}
+          onStartCustom={handleStartCustom}
+          savedScenarios={savedScenarios}
+        />
       </div>
     );
   }
@@ -189,4 +201,40 @@ function getActiveStep(state: PatientState): number {
   if (state.contradictions.some((c) => !c.resolved)) return 5;
   if (state.answers_received.length > 0) return 3;
   return 2;
+}
+
+function createSavedScenario(state: PatientState): ScenarioTemplate {
+  const clinicalFields: (keyof PatientState)[] = [
+    'patient_name',
+    'age',
+    'symptoms',
+    'symptom_severity',
+    'symptom_duration',
+    'heart_rate',
+    'respiratory_rate',
+    'oxygen_saturation',
+    'temperature',
+    'systolic_blood_pressure',
+    'diastolic_blood_pressure',
+    'consciousness',
+    'chest_pain',
+    'breathing_difficulty',
+    'bleeding',
+    'medical_history',
+    'medications',
+    'allergies',
+  ];
+  const initialState = Object.fromEntries(
+    clinicalFields.map((field) => [field, state[field]])
+  ) as Partial<PatientState>;
+  const patientName = state.patient_name?.trim() || 'Unnamed Synthetic Patient';
+
+  return {
+    id: `saved-${state.patient_id}`,
+    name: `${patientName}'s Simulation`,
+    description: 'Saved from a completed patient questionnaire.',
+    expectedRouting: state.routing_decision,
+    expectedRiskLevel: state.risk_level,
+    initialState,
+  };
 }
