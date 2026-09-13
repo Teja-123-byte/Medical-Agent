@@ -1,8 +1,4 @@
-// ============================================================================
-// Routing Policy — DETERMINISTIC
-// Converts the risk engine's result into a routing decision.
-// Separate from the LLM / agent layer.
-// ============================================================================
+
 
 import { RiskLevel, RoutingDecision, ContradictionEntry } from '@/types';
 
@@ -17,19 +13,19 @@ export interface RoutingContext {
 export function determineRouting(ctx: RoutingContext): RoutingDecision {
   const { riskLevel, contradictions, confidence, interviewComplete } = ctx;
 
-  // If interview not complete, routing is still pending
+  
   if (!interviewComplete && riskLevel === 'UNKNOWN') {
     return 'PENDING';
   }
 
-  // Escalate to human review when there are unresolved contradictions
-  // in HIGH or CRITICAL cases
+  
+  
   const unresolvedContradictions = contradictions.filter((c) => !c.resolved);
   if (unresolvedContradictions.length > 0 && (riskLevel === 'HIGH' || riskLevel === 'CRITICAL')) {
     return 'HUMAN_REVIEW';
   }
 
-  // Low confidence on high risk → human review
+
   if (riskLevel === 'HIGH' && confidence < 40) {
     return 'HUMAN_REVIEW';
   }

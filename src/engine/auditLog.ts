@@ -1,7 +1,4 @@
-// ============================================================================
-// Audit Log System
-// Records every major agent action with full context.
-// ============================================================================
+
 
 import { AuditEvent, AuditAction, RoutingDecision } from '@/types';
 

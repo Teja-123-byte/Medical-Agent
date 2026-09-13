@@ -283,9 +283,9 @@ export function selectNextQuestion(state: PatientState): Question | null {
   );
 
   const candidates = QUESTION_BANK.filter((q) => {
-    // Skip already-answered fields (unless there's an unresolved contradiction needing clarification)
+  
     if (answeredFields.has(q.field)) {
-      // Allow re-asking if there's an unresolved contradiction on this field
+      
       const hasUnresolvedContradiction = state.contradictions.some(
         (c) => c.field === q.field && !c.resolved
       );
@@ -296,7 +296,7 @@ export function selectNextQuestion(state: PatientState): Question | null {
 
   if (candidates.length === 0) return null;
 
-  // Sort by effective priority (base + boost)
+  
   const scored = candidates.map((q) => ({
     question: q,
     effectivePriority: q.priority + getPriorityBoost(q, state),
@@ -307,7 +307,7 @@ export function selectNextQuestion(state: PatientState): Question | null {
   return scored[0].question;
 }
 
-// --- Missing information detection ---
+
 
 export function getMissingInformation(state: PatientState): string[] {
   const answeredFields = new Set(state.answers_received.map((a) => a.field));
@@ -316,10 +316,10 @@ export function getMissingInformation(state: PatientState): string[] {
     .map((q) => q.label);
 }
 
-// --- Check if we should stop early ---
 
-export function shouldStopEarly(state: PatientState): boolean {
-  // Critical conditions that warrant immediate routing
+
+export function shouldStopEarly(state: PatientState): boolean 
+{
   if (state.risk_level === 'CRITICAL') return true;
 
   if (state.consciousness === 'UNRESPONSIVE') return true;
@@ -333,6 +333,6 @@ export function shouldStopEarly(state: PatientState): boolean {
 
 const OXYGEN_CRITICAL = 88;
 
-// --- Total question count ---
+
 
 export const TOTAL_QUESTIONS = QUESTION_BANK.length;

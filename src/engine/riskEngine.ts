@@ -1,8 +1,4 @@
-// ============================================================================
-// Deterministic Risk Engine — SYNTHETIC DEMONSTRATION
-// This engine is deliberately kept separate from the agent / LLM layer.
-// It uses configurable, synthetic rules — NOT clinically validated.
-// ============================================================================
+
 
 import { PatientState, RiskLevel, RiskResult, RiskFactorContribution } from '@/types';
 import { OXYGEN_THRESHOLDS, RISK_RULES, RISK_THRESHOLDS } from './rules';
@@ -13,7 +9,7 @@ export function classifyRisk(score: number): RiskLevel {
       return t.level;
     }
   }
-  // Score above all defined ranges
+  
   if (score > RISK_THRESHOLDS[0].maxScore) return RISK_THRESHOLDS[0].level;
   return 'LOW';
 }
@@ -46,14 +42,14 @@ export function calculateRisk(state: PatientState): RiskResult {
           ? 'HIGH'
           : classifyRisk(score);
 
-  // Confidence: based on how much information is present
+  
   const fieldsEvaluated = RISK_RULES.length;
   const fieldsWithData = RISK_RULES.filter(
     (r) => state[r.field] !== null && state[r.field] !== undefined
   ).length;
   const confidence = Math.round((fieldsWithData / fieldsEvaluated) * 100);
 
-  // Sort factors by points descending
+  
   factors.sort((a, b) => b.points - a.points);
 
   return { score, level, factors, confidence };

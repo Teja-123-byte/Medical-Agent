@@ -1,9 +1,3 @@
-// ============================================================================
-// Triage Agent — Orchestrator
-// Coordinates the adaptive decision loop:
-//   Observe → Reason → Ask → Update → Detect Contradiction →
-//   Recalculate → Reassess → Route
-// ============================================================================
 
 import { PatientState, Question, Answer, RiskResult } from '@/types';
 import { calculateRisk } from './riskEngine';
@@ -12,7 +6,6 @@ import { selectNextQuestion, getMissingInformation, shouldStopEarly } from './qu
 import { detectContradiction } from './contradictionDetector';
 import { createAuditEvent } from './auditLog';
 
-// --- State initialization ---
 
 export function createInitialState(
   patientId: string,
