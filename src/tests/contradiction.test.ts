@@ -71,4 +71,21 @@ describe('Contradiction Detection', () => {
     const contradiction = detectContradiction(state, answer, []);
     expect(contradiction).not.toBeNull();
   });
+
+  it('does not flag a vital change exactly at its tolerance', () => {
+    const state = makeState({ heart_rate: 70 });
+    const answer = makeAnswer('heart_rate', 85);
+    const contradiction = detectContradiction(state, answer, []);
+    expect(contradiction).toBeNull();
+  });
+
+  it('does not create a duplicate unresolved contradiction', () => {
+    const state = makeState({ symptom_severity: 'MILD' });
+    const answer = makeAnswer('symptom_severity', 'SEVERE');
+    const existing = detectContradiction(state, answer, []);
+    expect(existing).not.toBeNull();
+
+    const duplicate = detectContradiction(state, answer, [existing!]);
+    expect(duplicate).toBeNull();
+  });
 });

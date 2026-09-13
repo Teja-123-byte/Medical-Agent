@@ -71,6 +71,19 @@ describe('Risk Scoring', () => {
     const result = calculateRisk(state);
     expect(result.score).toBeGreaterThanOrEqual(10);
   });
+
+  it.each([
+    { field: 'heart_rate' as const, value: 40, points: 25 },
+    { field: 'heart_rate' as const, value: 140, points: 25 },
+    { field: 'respiratory_rate' as const, value: 8, points: 25 },
+    { field: 'respiratory_rate' as const, value: 35, points: 25 },
+    { field: 'temperature' as const, value: 40, points: 20 },
+    { field: 'systolic_blood_pressure' as const, value: 80, points: 25 },
+    { field: 'systolic_blood_pressure' as const, value: 180, points: 25 },
+  ])('scores the configured critical boundary for $field=$value', ({ field, value, points }) => {
+    const result = calculateRisk(makeState({ [field]: value }));
+    expect(result.factors.find((factor) => factor.field === field)?.points).toBe(points);
+  });
 });
 
 describe('Risk Classification', () => {
@@ -104,5 +117,16 @@ describe('Risk Classification', () => {
 
   it('classifies score 100 as CRITICAL', () => {
     expect(classifyRisk(100)).toBe('CRITICAL');
+  });
+
+  it.each([
+    [14, 'LOW'],
+    [15, 'MODERATE'],
+    [39, 'MODERATE'],
+    [40, 'HIGH'],
+    [69, 'HIGH'],
+    [70, 'CRITICAL'],
+  ] as const)('keeps the exact score boundary %i in %s', (score, expectedLevel) => {
+    expect(classifyRisk(score)).toBe(expectedLevel);
   });
 });
