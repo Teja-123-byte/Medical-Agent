@@ -1,6 +1,6 @@
-# Medical-Agent — Adaptive Emergency Triage Agent
+# Medical-Agent — Adaptive Emergency Triage Agent 
 
-Medical-Agent is an open-source research simulation for adaptive patient triage. It combines structured patient state, adaptive questioning, deterministic synthetic risk scoring, contradiction handling, routing decisions, and an auditable decision loop in a client-side React application.
+Medical-Agent is an open-source research simulation for adaptive patient triage. It combines structured patient state, adaptive questioning, deterministic synthetic risk scoring, contradiction handling, routing decisions, and an auditable decision loop in a client-side React.js application.
 
 > This project uses synthetic patient data and is intended for research, education, and software-engineering experimentation only. It is not a medical diagnostic system and must not be used for real-world clinical decision-making.
 
